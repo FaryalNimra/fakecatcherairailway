@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import "./Trial.scss";
 
 const Trial = () => {
@@ -6,29 +6,6 @@ const Trial = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictionType, setPredictionType] = useState("real_vs_fake");
-  const [showVideo, setShowVideo] = useState(false);
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (!file) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setShowVideo(true);
-            observer.disconnect();
-          }
-        },
-        { threshold: 0.1 }
-      );
-
-      if (videoRef.current) observer.observe(videoRef.current);
-
-      return () => observer.disconnect();
-    } else {
-      // If a file is chosen, hide the video
-      setShowVideo(false);
-    }
-  }, [file]);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -175,24 +152,11 @@ const Trial = () => {
               <div style={loadingTextStyle}>Please wait while your image is uploading...</div>
             </div>
           ) : !file ? (
-            <div ref={videoRef} style={{ width: "100%", height: "100%" }}>
-              {showVideo ? (
-                <video
-                  width="100%"
-                  height="100%"
-                  controls
-                  autoPlay
-                  muted
-                  loop
-                  preload="none"
-                  playsInline
-                >
-                  <source src="/assets/trevor_sesli.webm" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <p>Loading video preview...</p>
-              )}
+            <div className="video-preview">
+              <video width="100%" height="100%" controls autoPlay muted loop>
+                <source src="/assets/trevor_sesli.webm" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
               <p
                 className="demo-text"
                 style={{ color: "red", fontSize: "20px", marginTop: "5px" }}
@@ -233,10 +197,6 @@ const Trial = () => {
                         <span style={{ fontWeight: "bold", color: "red" }}>
                           {result.prediction || "N/A"}
                         </span>
-                      </p>
-                      <p>
-                        <strong>Faces Detected:</strong>{" "}
-                        {result.faces_detected !== undefined ? result.faces_detected : "No data"}
                       </p>
                     </>
                   ) : (
